@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin Dashboard — ExamSecure</title>
+<link rel="stylesheet" href="/style.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/cytoscape/3.28.1/cytoscape.min.js"></script>
+</head>
+<body class="admin-body">
+
+<div id="admin-login-screen" class="screen active">
+  <div class="login-card">
+    <div class="logo-area">
+      <div class="logo-icon admin-icon">&#128274;</div>
+      <h1>Admin Panel</h1>
+      <p class="subtitle">ExamSecure Monitoring Dashboard</p>
+    </div>
+    <div class="form-group">
+      <label>Username</label>
+      <input type="text" id="admin-user" value="admin" autocomplete="off">
+    </div>
+    <div class="form-group">
+      <label>Password</label>
+      <input type="password" id="admin-pass" value="admin">
+    </div>
+    <button class="btn btn-primary btn-block" onclick="adminLogin()">Login</button>
+    <div class="demo-hint">
+      <span class="hint-text">Default: admin / admin</span>
+    </div>
+  </div>
+</div>
+
+<div id="admin-dashboard" class="screen">
+  <nav class="admin-nav">
+    <div class="nav-brand">
+      <span class="nav-icon">&#128274;</span>
+      <span>ExamSecure <span class="nav-sub">Admin</span></span>
+    </div>
+    <div class="nav-actions">
+      <div id="connection-indicator" class="conn-dot disconnected" title="WebSocket status"></div>
+      <button class="btn btn-sm btn-demo" onclick="seedDemo()">&#9654; Run Demo</button>
+      <button class="btn btn-sm btn-danger" onclick="clearAll()">&#128465; Clear</button>
+    </div>
+  </nav>
+
+  <div class="dashboard-layout">
+
+    <aside class="sidebar">
+      <div class="sidebar-header">
+        <span class="sidebar-title">Students</span>
+        <span id="student-count" class="badge">0</span>
+      </div>
+      <div id="student-list" class="student-list">
+        <div class="empty-state">No students connected.<br>Run demo or open /</div>
+      </div>
+    </aside>
+
+    <section class="main-panel">
+
+      <div class="stats-row">
+        <div class="stat-card">
+          <div class="stat-value" id="stat-total">0</div>
+          <div class="stat-label">Total Students</div>
+        </div>
+        <div class="stat-card danger">
+          <div class="stat-value" id="stat-high-risk">0</div>
+          <div class="stat-label">High Risk (&gt;70%)</div>
+        </div>
+        <div class="stat-card warn">
+          <div class="stat-value" id="stat-clusters">0</div>
+          <div class="stat-label">Suspicious Clusters</div>
+        </div>
+        <div class="stat-card safe">
+          <div class="stat-value" id="stat-safe">0</div>
+          <div class="stat-label">Safe (&lt;30%)</div>
+        </div>
+      </div>
+
+      <div class="panel-card graph-card">
+        <div class="panel-header">
+          <span class="panel-title">&#128202; Live Cheating Network Graph</span>
+          <div class="panel-controls">
+            <span class="legend-item"><span class="legend-dot safe"></span>Safe</span>
+            <span class="legend-item"><span class="legend-dot warn"></span>Medium Risk</span>
+            <span class="legend-item"><span class="legend-dot danger"></span>High Risk</span>
+            <button class="btn btn-xs" onclick="exportGraph()">&#128190; Export PNG</button>
+          </div>
+        </div>
+        <div id="cy" class="cytoscape-container">
+          <div class="graph-placeholder">
+            <div class="spinner"></div>
+            <div>Waiting for data...</div>
+          </div>
+        </div>
+        <div id="edge-tooltip" class="edge-tooltip hidden"></div>
+      </div>
+
+      <div class="panel-card">
+        <div class="panel-header">
+          <span class="panel-title">&#128203; Detailed Student Report</span>
+          <span id="last-update" class="last-update"></span>
+        </div>
+        <div class="table-wrap">
+          <table class="data-table" id="report-table">
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Name</th>
+                <th>Answers</th>
+                <th>IP Group</th>
+                <th>Tab Switches</th>
+                <th>Pastes</th>
+                <th>Keystrokes/min</th>
+                <th>Risk Score</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody id="report-tbody"></tbody>
+          </table>
+        </div>
+      </div>
+
+    </section>
+  </div>
+</div>
+
+<div id="alert-popup" class="alert-popup hidden">
+  <div class="alert-popup-inner">
+    <div class="alert-popup-icon">&#9888;</div>
+    <div class="alert-popup-body">
+      <div class="alert-popup-title">Cheating Cluster Detected!</div>
+      <div id="alert-popup-msg" class="alert-popup-msg"></div>
+    </div>
+    <button class="alert-close" onclick="closeAlert()">&#10005;</button>
+  </div>
+</div>
+
+<script src="/admin.js"></script>
+</body>
+</html>

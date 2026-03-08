@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Online Exam Portal</title>
+<link rel="stylesheet" href="/style.css">
+</head>
+<body class="exam-body">
+
+<div id="login-screen" class="screen active">
+  <div class="login-card">
+    <div class="logo-area">
+      <div class="logo-icon">&#9679;</div>
+      <h1>ExamSecure</h1>
+      <p class="subtitle">Online Examination System</p>
+    </div>
+    <div class="form-group">
+      <label>Student ID</label>
+      <input type="text" id="student-id-input" placeholder="e.g. S001" autocomplete="off">
+    </div>
+    <div class="form-group">
+      <label>Full Name</label>
+      <input type="text" id="student-name-input" placeholder="Your name" autocomplete="off">
+    </div>
+    <button class="btn btn-primary btn-block" onclick="startExam()">Begin Exam</button>
+    <div class="demo-hint">
+      <a href="/admin.html" class="link-subtle">Admin Dashboard &rarr;</a>
+    </div>
+  </div>
+</div>
+
+<div id="exam-screen" class="screen">
+  <header class="exam-header">
+    <div class="exam-info">
+      <span class="exam-title">Mathematics &amp; Science Quiz</span>
+      <span id="student-label" class="student-label"></span>
+    </div>
+    <div class="timer-area">
+      <span class="timer-icon">&#9201;</span>
+      <span id="timer-display" class="timer">30:00</span>
+    </div>
+  </header>
+
+  <div class="progress-bar-wrap">
+    <div id="progress-bar" class="progress-bar"></div>
+  </div>
+
+  <main class="exam-main">
+    <div id="question-container" class="question-container"></div>
+
+    <div class="cheat-sim-panel">
+      <div class="cheat-sim-title">&#9888; Demo Controls</div>
+      <div class="cheat-sim-buttons">
+        <button class="btn btn-cheat" onclick="simCopyAnswer()" title="Copy identical answers from a peer">&#128203; Copy Answers</button>
+        <button class="btn btn-cheat" onclick="simSyncTime()" title="Synchronize submission time with peers">&#128337; Sync Submit Time</button>
+        <button class="btn btn-cheat" onclick="simGroupCheat()" title="Join a cheating group (shared IP)">&#128101; Group Cheat</button>
+      </div>
+      <div id="cheat-status" class="cheat-status"></div>
+    </div>
+
+    <div class="submit-area">
+      <button class="btn btn-primary btn-submit" onclick="submitExam()">Submit Exam</button>
+    </div>
+  </main>
+</div>
+
+<div id="submitted-screen" class="screen">
+  <div class="submitted-card">
+    <div class="check-icon">&#10003;</div>
+    <h2>Exam Submitted</h2>
+    <p>Your answers have been recorded.</p>
+    <p id="submitted-info" class="submitted-info"></p>
+    <a href="/admin.html" class="btn btn-outline">View Admin Dashboard</a>
+  </div>
+</div>
+
+<div id="alert-banner" class="alert-banner hidden"></div>
+
+<script src="/exam.js"></script>
+</body>
+</html>

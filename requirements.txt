@@ -1,0 +1,8 @@
+fastapi
+uvicorn[standard]
+networkx
+numpy
+scipy
+python-multipart
+python-jose[cryptography]
+aiofiles
