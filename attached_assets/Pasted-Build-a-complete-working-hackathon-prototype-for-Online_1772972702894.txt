@@ -1,0 +1,89 @@
+Build a complete, working hackathon prototype for "Online Exam Cheating Detection Using Graph Neural Networks (GNN)" – a real-time web-based system that detects collaborative cheating by constructing dynamic student graphs and analyzing them with GNN. This must be a fully functional demo runnable on Replit, Streamlit Cloud, or GitHub Codespaces, with simulated data for instant demo. Make it hackathon-ready: quick setup, one-click run, impressive visuals, and clear demo instructions.
+
+## Core Concept
+- Students are nodes in a graph.
+- Edges form based on suspicious similarities: answer patterns, submission timing (<5s diff), shared IP (simulate via user-agent/group), tab switches/copy-paste rates, keystroke speed.
+- GNN (or simulated GraphSAGE-like model via PyTorch Geometric) detects cheating clusters by node embeddings and community scores.
+- Inspired by real-world needs: traditional proctoring misses group cheating via WhatsApp/screen-share; this flags networks in real-time [file:1].
+
+## Required Components (Implement All)
+### 1. Student Exam Interface (Frontend: HTML/CSS/JS + Vanilla JS)
+- Multi-choice quiz: 10 questions (e.g., math/science), radio buttons, 30-min timer (countdown, auto-submit).
+- Behavior logging (send via WebSocket every 5s):
+  - Tab switches (visibilitychange event), copy-paste (clipboard events).
+  - Keystrokes (input rate), mouse movements, answer changes.
+  - Simulate IP: random group assignment (1-5 for demo cheating).
+- "Simulate Cheating" buttons: "Copy Answer" (high similarity), "Sync Time" (match submit time), "Group Cheat" (join cluster).
+- Responsive design, full-screen mode prompt.
+
+### 2. Admin Monitoring Dashboard (Separate page, login: admin/admin)
+- Real-time student list: ID, progress, behavior metrics (tabs switched, paste count), cheating score (0-100%).
+- Alerts: Popups for high-risk clusters (>70% score).
+- Live graph viz: NetworkX + PyVis or Cytoscape.js – nodes colored by risk (green=safe, red=cheat), edges labeled by similarity type, zoom/pan.
+- Cluster highlights: Animate suspicious groups pulsing red.
+
+### 3. Backend System (Python FastAPI + WebSockets)
+- `/ws/student/{id}`: Receive JSON activity logs, store in DB.
+- Graph builder: Every 10s, use NetworkX to create graph:
+  - Nodes: student features (answer vec, time, behaviors).
+  - Edges: if cosine_sim(answers)>0.8, |time_diff|<5s, same IP/group, similar tab_rate>0.7.
+- Cheating detection:
+  - Simple GNN: PyTorch Geometric GraphSAGE (2 layers), pre-train on dummy data or use rule-based simulation (community detection + avg neighbor risk).
+  - Output: node-level probs (softmax), cluster scores (Louvain modularity).
+  - Fallback: NetworkX clustering if PyG setup heavy – simulate GNN with embeddings.
+- API endpoints:
+  - POST /submit_answers, GET /admin/status, GET /graph_data.
+
+### 4. Database (SQLite for simplicity)
+- Tables: students (id, answers, time, ip_group, behaviors JSON), graphs (snapshot JSON).
+
+### 5. Demo Mode (Critical for Hackathon)
+- Seed 10 fake students: 7 legit, 3 cheaters in cluster (similar answers/time/IP).
+- "Start Demo" button: Launches 3 browser tabs simulating cheaters (JS auto-trigger behaviors).
+- Watch clusters form and alert in real-time (30s to detect).
+
+## Technology Stack (Keep Simple for Replit/Streamlit)
+Frontend: index.html (exam), admin.html (dashboard), app.js (WebSocket logging + viz).
+Backend: main.py (FastAPI, uvicorn), requirements.txt.
+Graph/ML: networkx, torch, torch_geometric (lightweight model), pyvis (HTML graph export).
+DB: sqlite3.
+Real-time: fastapi websocket, no external deps heavy.
+Serve static: FastAPI StaticFiles.
+
+text
+requirements.txt:
+fastapi
+uvicorn
+networkx
+torch
+torch_geometric
+pyvis
+sqlite3
+python-multipart
+
+text
+- No Docker; pip install -r && uvicorn main:app --reload.
+- For Streamlit: Wrap dashboard in Streamlit components if easier, but prefer pure FastAPI.
+
+## File Structure
+├── main.py # FastAPI app, WS, GNN logic
+├── requirements.txt
+├── static/
+│ ├── index.html # Exam
+│ ├── admin.html # Dashboard
+│ └── app.js # Shared JS
+├── db.sqlite # Auto-create
+├── demo.py # Run sim (optional)
+└── README.md # Hackathon demo steps: 1. pip install, 2. python main.py, 3. localhost:8000, 4. Demo cheat sim.
+
+text
+
+## Implementation Guidelines
+- Make GNN simple: 1 synthetic dataset train (100 graphs), infer on live graph.
+- Security: HMAC auth for WS, CORS for frontend.
+- Perf: Graphs <50 nodes, batch updates.
+- Polish: Dark theme, loading spinners, export graph PNG.
+- Error-free: Handle no PyG with NetworkX centrality scores as "GNN sim".
+- Test: Run locally, simulate 2-3 cheaters, show detection.
+
+Generate ALL code files complete and runnable. Output as zip/download or folder structure. Include 1-paragraph demo script for judges: "Watch as cheater cluster forms red in graph, score spikes, alert fires!"
